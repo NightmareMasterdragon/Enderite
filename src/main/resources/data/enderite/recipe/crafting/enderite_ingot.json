@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["GEG", "BMN", "GEG"],
+  "key": {
+    "G": { "item": "enderite:enderite_gem" },
+    "E": { "item": "minecraft:end_crystal" },
+    "B": { "item": "minecraft:dragon_breath" },
+    "N": { "item": "minecraft:netherite_ingot" },
+    "M": {"item":  "minecraft:nether_star"}
+  },
+  "result": { "id": "enderite:enderite_ingot", "count": 1 }
+}

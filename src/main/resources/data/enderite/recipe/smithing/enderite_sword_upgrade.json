@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:smithing_transform",
+  "template": { "item": "enderite:enderite_smithing_template" },
+  "base": { "item": "minecraft:netherite_sword" },
+  "addition": { "item": "enderite:enderite_ingot" },
+  "result": { "id": "enderite:enderite_sword", "count": 1 }
+}

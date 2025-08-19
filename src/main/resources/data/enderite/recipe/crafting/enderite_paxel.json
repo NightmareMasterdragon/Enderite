@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    { "item": "enderite:enderite_pickaxe" },
+    { "item": "enderite:enderite_axe" },
+    { "item": "enderite:enderite_shovel" },
+    { "item": "enderite:enderite_hoe" },
+    { "item": "minecraft:stick" },
+    { "item": "minecraft:stick" }
+  ],
+  "result": { "id": "enderite:enderite_paxel", "count": 1 }
+}

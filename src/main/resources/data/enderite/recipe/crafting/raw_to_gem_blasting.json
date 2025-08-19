@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "ingredient": { "item": "enderite:raw_enderite" },
+  "result": { "id": "enderite:enderite_gem", "count": 1 },
+  "experience": 1.2,
+  "cookingtime": 200
+}
