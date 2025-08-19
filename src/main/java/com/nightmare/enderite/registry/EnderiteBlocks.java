@@ -14,7 +14,7 @@ public final class EnderiteBlocks {
     public static final DeferredBlock<Block> ENDERITE_ORE = BLOCKS.registerSimpleBlock(
         "enderite_ore",
         BlockBehaviour.Properties.of()
-            .strength(20f, 1200f)
+            .strength(30f, 1200f)
             .requiresCorrectToolForDrops()
             .sound(SoundType.STONE)
     );

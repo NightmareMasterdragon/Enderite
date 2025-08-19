@@ -12,6 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Blocks;
@@ -61,12 +62,12 @@ public class PaxelItem extends DiggerItem implements IItemExtension {
         if (state.is(BlockTags.MINEABLE_WITH_PICKAXE)
                 || state.is(BlockTags.MINEABLE_WITH_AXE)
                 || state.is(BlockTags.MINEABLE_WITH_SHOVEL)) {
-            return paxelTier.getSpeed() * 1.05f; // a bit faster than Netherite
+            return paxelTier.getSpeed() * 1.05f; // slightly faster than the tier baseline
         }
         return super.getDestroySpeed(stack, state);
     }
 
-    // Right-click: Path -> Farmland toggle
+    // Right-click: first makes Dirt Path; right-clicking that Path makes Farmland.
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
         var level = ctx.getLevel();
@@ -77,7 +78,7 @@ public class PaxelItem extends DiggerItem implements IItemExtension {
         boolean client = level.isClientSide;
         ItemStack held = ctx.getItemInHand();
 
-        // Map hand -> EquipmentSlot for the 1.21.1 overload
+        // Map hand -> EquipmentSlot (required overload in 1.21.1)
         EquipmentSlot slot = (ctx.getHand() == InteractionHand.MAIN_HAND)
                 ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
 
@@ -91,7 +92,7 @@ public class PaxelItem extends DiggerItem implements IItemExtension {
             return InteractionResult.sidedSuccess(client);
         }
 
-        // Dirt/Grass/etc -> Dirt Path
+        // Make Dirt Path if block is pathable and air above (avoid ShovelItem.FLATTENABLES mapping issues)
         if (level.isEmptyBlock(above) && isPathable(state)) {
             if (!client) {
                 level.setBlock(pos, Blocks.DIRT_PATH.defaultBlockState(), 11);

@@ -10,14 +10,13 @@ import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.EnderManAngerEvent;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Set;
 
@@ -31,18 +30,16 @@ public class ArmorSetEffects {
                 && p.getInventory().armor.get(0).getItem() == EnderiteItems.ENDERITE_BOOTS.get();
     }
 
-    // === Flight toggle (server-side, every tick) ===
+    // Full-set flight, but never touch Creative/Spectator
     @SubscribeEvent
-    public static void onPlayerTick(net.neoforged.neoforge.event.tick.PlayerTickEvent.Post event) {
-        if (!(event.getEntity() instanceof ServerPlayer sp)) return; // getEntity() is correct
-        boolean full = hasFullEnderite(sp);
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
+        if (!(event.getEntity() instanceof ServerPlayer sp)) return;
+        if (sp.isCreative() || sp.isSpectator()) return; // <-- critical guard
 
+        boolean full = hasFullEnderite(sp);
         var ab = sp.getAbilities();
         if (full) {
-            if (!ab.mayfly) {
-                ab.mayfly = true;
-                sp.onUpdateAbilities();
-            }
+            if (!ab.mayfly) { ab.mayfly = true; sp.onUpdateAbilities(); }
         } else {
             if (ab.mayfly || ab.flying) {
                 ab.mayfly = false;
@@ -55,21 +52,22 @@ public class ArmorSetEffects {
     @SubscribeEvent
     public static void onEndermanAnger(EnderManAngerEvent event) {
         if (event.getPlayer() != null && hasFullEnderite(event.getPlayer())) {
-            event.setCanceled(true); // Gaze Veil
+            event.setCanceled(true);
         }
     }
 
-    // Void rescue, Magic immunity, Fire immunity, Evasion
     @SubscribeEvent
     public static void onIncomingDamage(LivingIncomingDamageEvent event) {
         LivingEntity e = event.getEntity();
         if (!(e instanceof Player p)) return;
         if (!hasFullEnderite(p)) return;
 
-        // Void rescue (teleport to safe top, no fall damage, no cooldown)
+        // Void rescue
         if (event.getSource().is(DamageTypes.FELL_OUT_OF_WORLD) && p.level() instanceof ServerLevel sl) {
-            BlockPos safe = sl.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, p.blockPosition());
-            p.teleportTo(sl, safe.getX() + 0.5, safe.getY() + 0.1, safe.getZ() + 0.5, Set.of(), p.getYRot(), p.getXRot());
+            BlockPos safe = findNearestTop(sl, p.blockPosition(), 24);
+            p.teleportTo(sl, safe.getX() + 0.5, safe.getY() + 0.1, safe.getZ() + 0.5,
+                    Set.of(), p.getYRot(), p.getXRot());
+            p.setDeltaMovement(Vec3.ZERO);
             p.fallDistance = 0;
             event.setCanceled(true);
             return;
@@ -84,23 +82,45 @@ public class ArmorSetEffects {
             return;
         }
 
-        // Fire immunity (covers lava, fire, hot floor, etc. via tag)
+        // Fire immunity
         if (event.getSource().is(DamageTypeTags.IS_FIRE)) {
             event.setCanceled(true);
             return;
         }
 
-        // Evasion: 25% negate any other hit (tune as desired)
+        // Evasion
         if (p.getRandom().nextFloat() < 0.25f) {
             event.setCanceled(true);
         }
     }
 
-    // No fall damage while in full set
     @SubscribeEvent
     public static void onFall(LivingFallEvent event) {
         if (event.getEntity() instanceof Player p && hasFullEnderite(p)) {
             event.setCanceled(true);
         }
+    }
+
+    private static BlockPos findNearestTop(ServerLevel level, BlockPos near, int radius) {
+        for (int r = 0; r <= radius; r++) {
+            for (int dx = -r; dx <= r; dx++) {
+                int x = near.getX() + dx;
+                int z1 = near.getZ() + r, z2 = near.getZ() - r;
+                BlockPos t1 = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(x, 0, z1));
+                if (!level.getBlockState(t1.below()).isAir()) return t1;
+                BlockPos t2 = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(x, 0, z2));
+                if (!level.getBlockState(t2.below()).isAir()) return t2;
+            }
+            for (int dz = -r + 1; dz <= r - 1; dz++) {
+                int z = near.getZ() + dz;
+                int x1 = near.getX() + r, x2 = near.getX() - r;
+                BlockPos t1 = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(x1, 0, z));
+                if (!level.getBlockState(t1.below()).isAir()) return t1;
+                BlockPos t2 = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(x2, 0, z));
+                if (!level.getBlockState(t2.below()).isAir()) return t2;
+            }
+        }
+        BlockPos colTop = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, near);
+        return new BlockPos(colTop.getX(), Math.max(colTop.getY(), level.getMinBuildHeight() + 1), colTop.getZ());
     }
 }
