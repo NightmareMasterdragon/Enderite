@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "ACA",
+    "ABA",
+    "AAA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:netherite_ingot"
+    },
+    "B": {
+      "item": "minecraft:end_stone"
+    },
+    "C": {
+      "item": "enderite:enderite_smithing_template"
+    }
+  },
+  "result": {
+    "id": "enderite:enderite_smithing_template",
+    "count": 2
+  }
+}

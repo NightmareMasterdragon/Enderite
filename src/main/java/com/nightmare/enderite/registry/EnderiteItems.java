@@ -21,7 +21,7 @@ public final class EnderiteItems {
         () -> new Item(new Item.Properties().stacksTo(64).rarity(Rarity.RARE)));
 
     public static final Supplier<Item> ENDERITE_ORE_ITEM = ITEMS.register("enderite_ore",
-        () -> new BlockItem(EnderiteBlocks.ENDERITE_ORE.get(), new Item.Properties()));
+            () -> new BlockItem(EnderiteBlocks.ENDERITE_ORE.get(), new Item.Properties()));
 
     public static final Supplier<SwordItem> ENDERITE_SWORD = ITEMS.register("enderite_sword", () ->
         new SwordItem(EnderiteTiers.ENDERITE,

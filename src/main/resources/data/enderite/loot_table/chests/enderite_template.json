@@ -8,7 +8,7 @@
           "type": "minecraft:item",
           "name": "enderite:enderite_smithing_template",
           "conditions": [
-            { "condition": "minecraft:random_chance", "chance": 0.33 }
+            { "condition": "minecraft:random_chance", "chance": 0.08 }
           ]
         }
       ]
