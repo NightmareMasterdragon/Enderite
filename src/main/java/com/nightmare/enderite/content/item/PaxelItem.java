@@ -39,7 +39,7 @@ public class PaxelItem extends DiggerItem implements IItemExtension {
     );
 
     public PaxelItem(Tier tier, Item.Properties props) {
-        // 1.21.x DiggerItem ctor: (Tier, TagKey<Block> incorrectForTool, Properties)
+        
         super(tier, EnderiteTiers.INCORRECT_FOR_ENDERITE_TOOL, props);
         this.paxelTier = tier;
     }
@@ -62,12 +62,12 @@ public class PaxelItem extends DiggerItem implements IItemExtension {
         if (state.is(BlockTags.MINEABLE_WITH_PICKAXE)
                 || state.is(BlockTags.MINEABLE_WITH_AXE)
                 || state.is(BlockTags.MINEABLE_WITH_SHOVEL)) {
-            return paxelTier.getSpeed() * 1.05f; // slightly faster than the tier baseline
+            return paxelTier.getSpeed() * 1.05f; 
         }
         return super.getDestroySpeed(stack, state);
     }
 
-    // Right-click: first makes Dirt Path; right-clicking that Path makes Farmland.
+    
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
         var level = ctx.getLevel();
@@ -78,11 +78,11 @@ public class PaxelItem extends DiggerItem implements IItemExtension {
         boolean client = level.isClientSide;
         ItemStack held = ctx.getItemInHand();
 
-        // Map hand -> EquipmentSlot (required overload in 1.21.1)
+        
         EquipmentSlot slot = (ctx.getHand() == InteractionHand.MAIN_HAND)
                 ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
 
-        // Path -> Farmland
+        
         if (state.is(Blocks.DIRT_PATH) && level.isEmptyBlock(above)) {
             if (!client) {
                 level.setBlock(pos, Blocks.FARMLAND.defaultBlockState(), 11);
@@ -92,7 +92,7 @@ public class PaxelItem extends DiggerItem implements IItemExtension {
             return InteractionResult.sidedSuccess(client);
         }
 
-        // Make Dirt Path if block is pathable and air above (avoid ShovelItem.FLATTENABLES mapping issues)
+      
         if (level.isEmptyBlock(above) && isPathable(state)) {
             if (!client) {
                 level.setBlock(pos, Blocks.DIRT_PATH.defaultBlockState(), 11);
