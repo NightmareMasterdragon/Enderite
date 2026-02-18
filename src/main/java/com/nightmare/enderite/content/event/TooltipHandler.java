@@ -3,10 +3,10 @@ package com.nightmare.enderite.content.event;
 import com.nightmare.enderite.EnderiteMod;
 import com.nightmare.enderite.registry.EnderiteItems;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;            // Shift detection (client)
+import net.minecraft.client.gui.screens.Screen;           
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;                 // Client-only subscriber
+import net.neoforged.api.distmarker.Dist;                
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
