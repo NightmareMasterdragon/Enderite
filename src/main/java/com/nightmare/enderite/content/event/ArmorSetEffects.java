@@ -30,11 +30,11 @@ public class ArmorSetEffects {
                 && p.getInventory().armor.get(0).getItem() == EnderiteItems.ENDERITE_BOOTS.get();
     }
 
-    // Full-set flight, but never touch Creative/Spectator
+   
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer sp)) return;
-        if (sp.isCreative() || sp.isSpectator()) return; // <-- critical guard
+        if (sp.isCreative() || sp.isSpectator()) return; 
 
         boolean full = hasFullEnderite(sp);
         var ab = sp.getAbilities();
@@ -62,7 +62,7 @@ public class ArmorSetEffects {
         if (!(e instanceof Player p)) return;
         if (!hasFullEnderite(p)) return;
 
-        // Void rescue
+        
         if (event.getSource().is(DamageTypes.FELL_OUT_OF_WORLD) && p.level() instanceof ServerLevel sl) {
             BlockPos safe = findNearestTop(sl, p.blockPosition(), 24);
             p.teleportTo(sl, safe.getX() + 0.5, safe.getY() + 0.1, safe.getZ() + 0.5,
@@ -73,7 +73,7 @@ public class ArmorSetEffects {
             return;
         }
 
-        // Magic immunity
+        
         if (event.getSource().is(DamageTypes.MAGIC)
                 || event.getSource().is(DamageTypes.INDIRECT_MAGIC)
                 || event.getSource().is(DamageTypes.DRAGON_BREATH)
@@ -82,13 +82,13 @@ public class ArmorSetEffects {
             return;
         }
 
-        // Fire immunity
+        
         if (event.getSource().is(DamageTypeTags.IS_FIRE)) {
             event.setCanceled(true);
             return;
         }
 
-        // Evasion
+        
         if (p.getRandom().nextFloat() < 0.25f) {
             event.setCanceled(true);
         }
