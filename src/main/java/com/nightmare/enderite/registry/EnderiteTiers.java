@@ -16,10 +16,10 @@ public final class EnderiteTiers {
     // Use NeoForge's helper
     public static final Tier ENDERITE = new net.neoforged.neoforge.common.SimpleTier(
             INCORRECT_FOR_ENDERITE_TOOL,
-            2031 * 3,     // uses (3x netherite)
-            18.0f,        // mining speed
-            4.0f,         // attack dmg bonus (sword total -> 35 via createAttributes)
-            50,           // enchantability
+            2031 * 3,     
+            18.0f,        
+            4.0f,         
+            50,           
             () -> Ingredient.of(EnderiteItems.ENDERITE_INGOT.get())
     );
 
